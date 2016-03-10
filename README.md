@@ -7,11 +7,10 @@ It opens up to all characters the user owns.  Should display character name and 
 The series screen should look similar to the character screen, only it shows Series titles.  Behaves the same as well.  Clicking a series shows a new screen that displays the issue numbers the user has.
 
 Currenlty, it operates like so:
-Character screen works mostly.  Issues with certain images when loaded in but not normal scrolling.  Remove function not added yet.  Series screen is very barebones.  Just add Series.  No issue implementation yet.
+Character and Series works completely but without Remove function  No Issue implementation yet.
 
 Thoughts:
 Should use a better structure for saving data.
-Need to better handle images.
 Will improve asthetics once it works properly.
 
 Possible future modifications/new apps:
