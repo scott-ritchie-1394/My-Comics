@@ -15,14 +15,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.android.SeriesActivity;
+import com.example.android.CharacterAdapter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,16 +29,14 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    int TextViewCount = 0;//Keeps track of number of text views.
-    ArrayList<String> characterNames = new ArrayList<>();//Holds character names to be displayed
     List<character> characters = new ArrayList<>();//Holds our characters
-
-    int userImage = 1;//Used for user selected image.
-    ImageView currentUserEdit;
+    CharacterAdapter adapter;
+    ListView listView;
+    public static ImageView currentUserEdit;
+    public static character currentSaveCharacter;
 
     Context context = this;
     String nextDisplayName = "";//Used to hold String for new character as input by user
@@ -53,74 +49,14 @@ public class MainActivity extends AppCompatActivity {
         comicHeightInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, getResources().getDisplayMetrics());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String charsString = prefs.getString(prefKey, "");//Gets characters from memory.
-        //If we have never saved anything before.
-        if (charsString != "") {
-            characterNames = listFromString(charsString);
-            for(int i = 0;i<characterNames.size();i++){
-                character myChar = new character(characterNames.get(i));
-                characters.add(myChar);
-            }
-        }
-        */
+        adapter  = new CharacterAdapter(this,characters);
+        listView = (ListView) findViewById(R.id.listView);
+        listView.setAdapter(adapter);
         try{
             readCharacters();//Should build our array of Characters from file.
-        }catch(Exception e){Toast.makeText(this,"ERROR",Toast.LENGTH_LONG).show();}
-        for(int i = 0; i< characters.size();i++){//Creates the characterNames array from characters array.
-            String charactername = characters.get(i).getCharacterName();
-            characterNames.add(charactername);
-        }
-        displayNames();
-        for(int i = 0;i<characters.size();i++){//Sets images previously selected by user.
-            if(characters.get(i).getImage() !=null){
-                ImageView mImageView = (ImageView) findViewById(i);
-                mImageView.setImageBitmap(characters.get(i).getImage());
-            }
-        }
+        }catch(Exception e){Toast.makeText(this,"ERROR",Toast.LENGTH_LONG).show();
+        Log.d("READ ERROR",e.toString());}
     }
-    //Goes to our Series view.
-    public void nextActivity(String characterName) {
-        Intent intent = new Intent(this, SeriesActivity.class);
-        intent.putExtra("currentCharName",characterName);//So we know what character we are dealing with
-        startActivity(intent);
-    }
-
-    public void addCharacterView() {//Creates the Character View that holds picture and name
-        //Horizontal layout for holding our Text and Imageview
-        LinearLayout parentLinearLayout = (LinearLayout) findViewById(R.id.parentLinear);
-        LinearLayout childLinearLayout = new LinearLayout(this);
-        childLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        //The image view
-        ImageView comic = new ImageView(this);
-        comic.setId(TextViewCount);//For retrieval to set Image later.
-        comic.setLayoutParams(new LinearLayout.LayoutParams(0, comicHeightInPx, 2.25f));
-        comic.setImageResource(R.drawable.addimage);//Default plus sign
-        childLinearLayout.addView(comic);
-        comic.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {//To set custom image
-                currentUserEdit = (ImageView) v;
-                userSetImage();
-            }
-        });
-        //The text view
-        TextView characterTextView = new TextView(this);
-        characterTextView.setText(nextDisplayName);//This was set by our characterDialog
-        characterTextView.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 8f));
-        characterTextView.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {//Goes to series view for current character
-                TextView currentTextView = (TextView) v;
-                String charName = currentTextView.getText().toString();
-                nextActivity(charName);
-            }
-        });
-        characterTextView.setTextSize(28);
-        childLinearLayout.addView(characterTextView);
-        parentLinearLayout.addView(childLinearLayout);
-        TextViewCount++;
-    }
-
     //Creates dialoge for adding a character
     public void characterDialog(View view) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
@@ -131,24 +67,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 nextDisplayName = txtInput.getText().toString();//Gets name of character to add
-                addCharacterView();
                 //Next three lines update variables and saves them.
-                characterNames.add(nextDisplayName);
                 characters.add(new character(nextDisplayName));
+                adapter.add(characters.get(characters.size()-1));
                 saveCharacters(context);
             }
         });
         AlertDialog dialogCharacterName = dialogBuilder.create();
         dialogCharacterName.show();
     }
-
-    //Creates a characterView if we allready know the name
-    public void addCharacterView(String characterName) {
-        nextDisplayName = characterName;
-        addCharacterView();
-    }
-
-
     private void saveCharacters(Context context){//Writes our characters array to file using serializable.
         String filePath = context.getFilesDir().getPath().toString() + "/saveFile.txt";
         File f = new File(filePath);
@@ -161,24 +88,11 @@ public class MainActivity extends AppCompatActivity {
             out.close();
         }
         catch(Exception e){Toast.makeText(MainActivity.this,
-                "ERROR", Toast.LENGTH_LONG).show();
-                Log.d("MYERROR",e.toString());}
+                "SAVEERROR", Toast.LENGTH_LONG).show();
+                Log.d("SAVEERROR",e.toString());}
     }
 
-    private void displayNames() {//Used in onCreate method to display all characters in characterNames
-        for (int i = 0; i < characterNames.size(); i++) {
-            addCharacterView(characterNames.get(i));
-        }
-    }
-
-    private void userSetImage() {//Called from clicking the image view.
-        // Create intent to Open Image applications like Gallery, Google Photos
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        // Start the Intent
-        startActivityForResult(galleryIntent, userImage);
-    }
-
-    //Currently loads too slow for larger pictures. Need help here.
+    //Sets image and saves it
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent returnedIntent) {
         super.onActivityResult(requestCode, resultCode, returnedIntent);
@@ -186,26 +100,25 @@ public class MainActivity extends AppCompatActivity {
             // When an Image is picked
             if (resultCode == RESULT_OK && null != returnedIntent) {
                 // Get the Image from data
-
                 Uri imageLocation = returnedIntent.getData();
                 InputStream imageStream = getContentResolver().openInputStream(imageLocation);
                 Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                selectedImage = getResizedBitmap(selectedImage,1080,1920);
+                selectedImage = getResizedBitmap(selectedImage,1080/4,1920/4);
                 currentUserEdit.setImageBitmap(selectedImage);
-                characters.get(currentUserEdit.getId()).setImage(selectedImage);
+                currentSaveCharacter.setImage(selectedImage);
                 saveCharacters(context);
             }
         } catch (Exception e) {
-            Toast.makeText(this, "Error", Toast.LENGTH_LONG)
+            Toast.makeText(this, "ImageGet ERROR", Toast.LENGTH_LONG)
                     .show();
             Log.d("ImageGet ERROR", e.toString());
         }
 
     }
+    //Resizes a bitmap
     public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
         int width = bm.getWidth();
         int height = bm.getHeight();
-
         // Create a matrix for manipulation
         Matrix matrix = new Matrix();
         // Resize the bitmap
@@ -218,17 +131,17 @@ public class MainActivity extends AppCompatActivity {
         try {
             String filePath = context.getFilesDir().getPath().toString() + "/saveFile.txt";
             File f = new File(filePath);
-            FileInputStream fis = null;
-            ObjectInputStream in = null;
-            fis = new FileInputStream(f);
-            in = new ObjectInputStream(fis);
+            FileInputStream fis = new FileInputStream(f);
+            ObjectInputStream in = new ObjectInputStream(fis);
             characters = (List<character>) in.readObject();
             in.close();
         }
         catch(Exception e){}
+        adapter.addAll(characters);
     }
-    public void buildDefault(View view){
+    public void buildDefault(View v){
         characters.clear();
+        System.out.println(characters);
         character Batman = new character("Batman");
         character Superman = new character("Superman");
         character wonderWoman = new character("Wonder Woman");
@@ -244,21 +157,8 @@ public class MainActivity extends AppCompatActivity {
         characters.add(spidreman);
         characters.add(harelyQuinn);
         saveCharacters(context);
-        try{
-            readCharacters();//Should build our array of Characters from file.
-        }catch(Exception e){Toast.makeText(this,"ERROR",Toast.LENGTH_LONG).show();}
-        for(int i = 0; i< characters.size();i++){//Creates the characterNames array from characters array.
-            String charactername = characters.get(i).getCharacterName();
-            characterNames.add(charactername);
-        }
-        displayNames();
-        for(int i = 0;i<characters.size();i++){//Sets images previously selected by user.
-            if(characters.get(i).getImage() !=null){
-                ImageView mImageView = (ImageView) findViewById(i);
-                mImageView.setImageBitmap(characters.get(i).getImage());
-            }
-        }
-
+        adapter.notifyDataSetChanged();
+        System.out.println(characters);
     }
 
 

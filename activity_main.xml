@@ -4,23 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.android.mycomics.MainActivity">
-    <ScrollView
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-     <LinearLayout
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:orientation="vertical"
-         android:id="@+id/parentLinear">
-         <TextView
-             android:layout_width="match_parent"
-             android:layout_height="wrap_content"
-             android:text="My Characters"
-             android:gravity="center"
-             android:textSize="24sp"
-             android:background="@android:color/holo_blue_light"/>
-     </LinearLayout>
-    </ScrollView>
+        android:layout_height="match_parent"
+        android:id="@+id/listView"></ListView>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -40,7 +27,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="build defualt"
+            android:text="builddefault"
             android:onClick="buildDefault"/>
     </LinearLayout>
 </RelativeLayout>
