@@ -12,6 +12,7 @@ Character and Series works completely but without Remove function  No Issue impl
 Thoughts:
 Should use a better structure for saving data.
 Will improve asthetics once it works properly.
+Add sort function.
 
 Possible future modifications/new apps:
 More information such as publisher.
