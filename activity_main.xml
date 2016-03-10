@@ -37,5 +37,10 @@
         android:layout_height="wrap_content"
         android:text="Remove"
         android:onClick="removeTextView"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="build defualt"
+            android:onClick="buildDefault"/>
     </LinearLayout>
 </RelativeLayout>

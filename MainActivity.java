@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -187,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 Uri imageLocation = returnedIntent.getData();
                 InputStream imageStream = getContentResolver().openInputStream(imageLocation);
                 Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                selectedImage = getResizedBitmap(selectedImage,1080,1920);
                 currentUserEdit.setImageBitmap(selectedImage);
                 characters.get(currentUserEdit.getId()).setImage(selectedImage);
                 saveCharacters(context);
@@ -197,6 +201,17 @@ public class MainActivity extends AppCompatActivity {
             Log.d("ImageGet ERROR", e.toString());
         }
 
+    }
+    public static Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+
+        // Create a matrix for manipulation
+        Matrix matrix = new Matrix();
+        // Resize the bitmap
+        matrix.setRectToRect(new RectF(0, 0, width, height), new RectF(0, 0, newWidth, newHeight), Matrix.ScaleToFit.CENTER);
+        // Return a newly created bitmap
+        return Bitmap.createBitmap(bm, 0, 0, width, height, matrix, true);
     }
 
     protected void readCharacters() {//Reads characters array from file
@@ -211,6 +226,39 @@ public class MainActivity extends AppCompatActivity {
             in.close();
         }
         catch(Exception e){}
+    }
+    public void buildDefault(View view){
+        characters.clear();
+        character Batman = new character("Batman");
+        character Superman = new character("Superman");
+        character wonderWoman = new character("Wonder Woman");
+        character avengers = new character("Avengers");
+        character justicLeague = new character("Justice League");
+        character spidreman = new character("Spider-Man");
+        character harelyQuinn = new character("Harley Quinn");
+        characters.add(Batman);
+        characters.add(Superman);
+        characters.add(wonderWoman);
+        characters.add(avengers);
+        characters.add(justicLeague);
+        characters.add(spidreman);
+        characters.add(harelyQuinn);
+        saveCharacters(context);
+        try{
+            readCharacters();//Should build our array of Characters from file.
+        }catch(Exception e){Toast.makeText(this,"ERROR",Toast.LENGTH_LONG).show();}
+        for(int i = 0; i< characters.size();i++){//Creates the characterNames array from characters array.
+            String charactername = characters.get(i).getCharacterName();
+            characterNames.add(charactername);
+        }
+        displayNames();
+        for(int i = 0;i<characters.size();i++){//Sets images previously selected by user.
+            if(characters.get(i).getImage() !=null){
+                ImageView mImageView = (ImageView) findViewById(i);
+                mImageView.setImageBitmap(characters.get(i).getImage());
+            }
+        }
+
     }
 
 
