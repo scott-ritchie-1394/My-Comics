@@ -38,7 +38,7 @@ public class SeriesActivity extends AppCompatActivity {//Works similaryly to Mai
     String currentCharacter = "";
     String filePath = "";
     List<Series> series = new ArrayList<>();//Holds our characters
-    SeriesAdapter adapter;
+    SeriesAdapter seriesAdapter;
     ListView listView;
     public static ImageView currentUserEdit;
     public static Series currentSaveSeries;
@@ -54,10 +54,12 @@ public class SeriesActivity extends AppCompatActivity {//Works similaryly to Mai
         comicHeightInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, getResources().getDisplayMetrics());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_2);
+        Intent i = getIntent();
+        currentCharacter = (String) i.getSerializableExtra("currentCharName");
         filePath = this.getFilesDir().getPath().toString() + "/" + currentCharacter + ".txt";
-        adapter  = new SeriesAdapter(this,series);
+        seriesAdapter  = new SeriesAdapter(this,series);
         listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(adapter);
+        listView.setAdapter(seriesAdapter);
         try{
             readSeries();//Should build our array of Series from file.
         }catch(Exception e){Toast.makeText(this,"ERROR",Toast.LENGTH_LONG).show();
@@ -75,7 +77,7 @@ public class SeriesActivity extends AppCompatActivity {//Works similaryly to Mai
                 nextDisplayName = txtInput.getText().toString();//Gets name of character to add
                 //Next three lines update variables and saves them.
                 series.add(new Series(nextDisplayName));
-                //adapter.add(series.get(series.size()-1));
+                //seriesAdapter.add(series.get(series.size()-1));
                 saveSeries(context);
             }
         });
@@ -141,7 +143,7 @@ public class SeriesActivity extends AppCompatActivity {//Works similaryly to Mai
             in.close();
         }
         catch(Exception e){}
-        adapter.addAll(series);
+        seriesAdapter.addAll(series);
     }
     public void buildDefault(View v){
         series.clear();
@@ -161,7 +163,7 @@ public class SeriesActivity extends AppCompatActivity {//Works similaryly to Mai
         series.add(spidreman);
         series.add(harelyQuinn);
         saveSeries(context);
-        adapter.notifyDataSetChanged();
+        seriesAdapter.notifyDataSetChanged();
         System.out.println(series);
     }
     public void goToMain(View v){

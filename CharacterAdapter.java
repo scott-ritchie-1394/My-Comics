@@ -53,7 +53,7 @@ public class CharacterAdapter extends ArrayAdapter<character> {
         charName.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {//To set custom image
                 //Toast.makeText(getContext(), myCharacter.getCharacterName(), Toast.LENGTH_SHORT).show();
-                nextActivity(myCharacter.getCharacterName());
+                nextActivity(getItem(position).getCharacterName());
             }
         });
 
