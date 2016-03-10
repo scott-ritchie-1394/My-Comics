@@ -15,8 +15,8 @@ Need to better handle images.
 Will improve asthetics once it works properly.
 
 Possible future modifications/new apps:
-More information such as publisher
-Implement API databases
-Output a text file that can be sent to an email so the user can print it and take it with them
-Use a barecode scanner to get information
+More information such as publisher.
+Implement API databases.
+Output a text file that can be sent to an email so the user can print it and take it with them.
+Use a barecode scanner to get information.
 Maybe do away with current strucure, and just have an option to display by Publisher, Character, Series, etc.
