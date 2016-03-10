@@ -11,14 +11,10 @@ Currenlty, it operates like so:
 
 Character and Series works completely but without Remove function  No Issue implementation yet.
 
-Thoughts:
-
+Thoughts:\n
 Should use a better structure for saving data.
-
 Will improve asthetics once it works properly.
-
 Add sort function.
-
 Possible future modifications/new apps:
 
 More information such as publisher.
