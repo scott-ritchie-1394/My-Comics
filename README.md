@@ -16,6 +16,7 @@ Will improve asthetics once it works properly.
 Add sort function for character and series.
 Should clean up code.  Right now it is ductaped together.
 Currently very "brute forced".
+Come up with a more astheticaly pleasing way to display issues.
 
 Possible future modifications/new apps:
 More information such as publisher.
