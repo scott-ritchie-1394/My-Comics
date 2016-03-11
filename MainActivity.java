@@ -21,6 +21,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.android.CharacterAdapter;
+import com.example.android.SeriesActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    String filePath ="";
     List<character> characters = new ArrayList<>();//Holds our characters
     CharacterAdapter adapter;
     ListView listView;
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         //Gets height using dp
         comicHeightInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 120, getResources().getDisplayMetrics());
+        filePath = this.getFilesDir().getPath().toString() + "/saveFile.txt";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         adapter  = new CharacterAdapter(this,characters);
@@ -66,10 +69,14 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                int firstSize=characters.size();
                 nextDisplayName = txtInput.getText().toString();//Gets name of character to add
                 //Next three lines update variables and saves them.
                 characters.add(new character(nextDisplayName));
                 adapter.add(characters.get(characters.size()-1));
+                if(characters.size() > firstSize + 1){
+                    characters.remove(characters.size()-1);
+                }
                 saveCharacters(context);
             }
         });
@@ -77,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
         dialogCharacterName.show();
     }
     private void saveCharacters(Context context){//Writes our characters array to file using serializable.
-        String filePath = context.getFilesDir().getPath().toString() + "/saveFile.txt";
         File f = new File(filePath);
         FileOutputStream fos = null;
         ObjectOutputStream out = null;
@@ -129,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected void readCharacters() {//Reads characters array from file
         try {
-            String filePath = context.getFilesDir().getPath().toString() + "/saveFile.txt";
             File f = new File(filePath);
             FileInputStream fis = new FileInputStream(f);
             ObjectInputStream in = new ObjectInputStream(fis);
@@ -139,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
         catch(Exception e){}
         adapter.addAll(characters);
     }
-    public void buildDefault(View v){
+    public void buildDefault(View v){/*
         characters.clear();
         System.out.println(characters);
         character Batman = new character("Batman");
@@ -158,7 +163,37 @@ public class MainActivity extends AppCompatActivity {
         characters.add(harelyQuinn);
         saveCharacters(context);
         adapter.notifyDataSetChanged();
-        System.out.println(characters);
+        System.out.println(characters);*/
+    }
+    public void clearData(View v){
+        File cache = getCacheDir();
+        File appDir = new File(cache.getParent());
+        if (appDir.exists()) {
+            String[] children = appDir.list();
+            for (String s : children) {
+                if (!s.equals("lib")) {
+                    deleteDir(new File(appDir, s));
+                    Log.i("TAG", "**************** File /data/data/APP_PACKAGE/" + s + " DELETED *******************");
+                }
+            }
+        }
+        characters.clear();
+        saveCharacters(context);
+        adapter.notifyDataSetChanged();
+
+    }
+    public static boolean deleteDir(File dir) {
+        if (dir != null && dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+
+        return dir.delete();
     }
 
 

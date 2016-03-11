@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.mycomics.IssueActivity;
 import com.example.android.mycomics.MainActivity;
 import com.example.android.mycomics.R;
 import com.example.android.mycomics.Series;
@@ -45,7 +46,7 @@ public class SeriesAdapter extends ArrayAdapter<Series> {
         seriesName.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {//To set custom image
                 //Toast.makeText(getContext(), mySeries.getCharacterName(), Toast.LENGTH_SHORT).show();
-                nextActivity(mySeries.getSeriesName());
+                nextActivity(mySeries);
             }
         });
 
@@ -65,9 +66,10 @@ public class SeriesAdapter extends ArrayAdapter<Series> {
         // Start the Intent
         ((Activity) context).startActivityForResult(galleryIntent, 1);
     }
-    public void nextActivity(String characterName) {
-        /*Intent intent = new Intent(context, SeriesActivity.class);
-        intent.putExtra("currentCharName",characterName);//So we know what character we are dealing with
-        context.startActivity(intent);*/
+    public void nextActivity(Series mySeries) {
+        Intent intent = new Intent(context, IssueActivity.class);
+        intent.putExtra("currentSeries",mySeries);
+        intent.putExtra("character",SeriesActivity.currentCharacter);//So we know what character we are dealing with
+        context.startActivity(intent);
     }
 }

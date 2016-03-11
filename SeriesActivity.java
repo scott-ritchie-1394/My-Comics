@@ -35,9 +35,9 @@ import java.util.List;
 
 //NOTE: Currently does not support custom Series image. Parts of skeleton for that code are here.
 public class SeriesActivity extends AppCompatActivity {//Works similaryly to MainActivity
-    String currentCharacter = "";
+    public static String currentCharacter = "";
     String filePath = "";
-    List<Series> series = new ArrayList<>();//Holds our characters
+    List<Series> series = new ArrayList<>();//Holds our series
     SeriesAdapter seriesAdapter;
     ListView listView;
     public static ImageView currentUserEdit;
@@ -57,7 +57,7 @@ public class SeriesActivity extends AppCompatActivity {//Works similaryly to Mai
         Intent i = getIntent();
         currentCharacter = (String) i.getSerializableExtra("currentCharName");
         filePath = this.getFilesDir().getPath().toString() + "/" + currentCharacter + ".txt";
-        seriesAdapter  = new SeriesAdapter(this,series);
+        seriesAdapter  = new SeriesAdapter(this, series);
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(seriesAdapter);
         try{
@@ -66,7 +66,7 @@ public class SeriesActivity extends AppCompatActivity {//Works similaryly to Mai
             Log.d("READ ERROR",e.toString());}
     }
     //Creates dialoge for adding a character
-    public void characterDialog(View view) {
+    public void seriesDialog(View view) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final EditText txtInput = new EditText(this);
         dialogBuilder.setTitle("Add Series:");
@@ -74,10 +74,14 @@ public class SeriesActivity extends AppCompatActivity {//Works similaryly to Mai
         dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                int firstSize=series.size();
                 nextDisplayName = txtInput.getText().toString();//Gets name of character to add
                 //Next three lines update variables and saves them.
                 series.add(new Series(nextDisplayName));
-                //seriesAdapter.add(series.get(series.size()-1));
+                seriesAdapter.add(series.get(series.size() - 1));
+                if(series.size() > firstSize + 1){
+                    series.remove(series.size()-1);
+                }
                 saveSeries(context);
             }
         });

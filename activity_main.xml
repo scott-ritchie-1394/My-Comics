@@ -14,18 +14,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add"
-            android:onClick="characterDialog"
-            android:layout_gravity="bottom"/>
+            android:onClick="characterDialog" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Remove"
-            android:onClick="removeTextView"/>
+            android:onClick="removeTextView" />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="builddefault"
+            android:text="defult"
             android:onClick="buildDefault"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Clear Data"
+            android:onClick="clearData"/>
     </LinearLayout>
     <ListView
         android:layout_width="match_parent"

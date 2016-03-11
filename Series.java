@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Scott on 3/7/2016.
@@ -42,5 +43,8 @@ public class Series implements Serializable {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         b.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byteArray = stream.toByteArray();
+    }
+    public void sortIssues(){
+        Collections.sort(issues);
     }
 }
