@@ -8,12 +8,14 @@ It opens up to all characters the user owns.  Should display character name and 
 The series screen should look similar to the character screen, only it shows Series titles.  Behaves the same as well.  Clicking a series shows a new screen that displays the issue numbers the user has.
 
 Currenlty, it operates like so:
-Character and Series works completely but without Remove function  No Issue implementation yet.
+Everything works, except for the remove function on any view.
 
 Thoughts:
 Should use a better structure for saving data.
 Will improve asthetics once it works properly.
-Add sort function.
+Add sort function for character and series.
+Should clean up code.  Right now it is ductaped together.
+Currently very "brute forced".
 
 Possible future modifications/new apps:
 More information such as publisher.
